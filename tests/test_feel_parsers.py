@@ -132,7 +132,9 @@ BUILD_IN_FUNCS = [
     (
         'time("00:00:00@America/Los_Angeles")',
         {},
-        datetime.time(hour=0, minute=0, second=0, tzinfo=pytz.timezone("America/Los_Angeles")),
+        datetime.time(
+            hour=0, minute=0, second=0, tzinfo=pytz.timezone("America/Los_Angeles")
+        ),
     ),
     (
         'time("00:00:00+08:00")',
@@ -217,13 +219,24 @@ BUILD_IN_FUNCS = [
     ("not(false)", {}, True),
     ("not(null)", {}, True),
     # json loads
-    ('json loads(data)', {'data': '{"name": "test", "value": 123}'}, {"name": "test", "value": 123}),
-    ('json loads(arr)', {'arr': '[1, 2, 3]'}, [1, 2, 3]),
-    ('json loads(nested)', {'nested': '{"items": [1, 2], "info": {"key": "val"}}'}, {"items": [1, 2], "info": {"key": "val"}}),
+    (
+        "json loads(data)",
+        {"data": '{"name": "test", "value": 123}'},
+        {"name": "test", "value": 123},
+    ),
+    ("json loads(arr)", {"arr": "[1, 2, 3]"}, [1, 2, 3]),
+    (
+        "json loads(nested)",
+        {"nested": '{"items": [1, 2], "info": {"key": "val"}}'},
+        {"items": [1, 2], "info": {"key": "val"}},
+    ),
     ('json loads("123")', {}, 123),
     ('json loads("true")', {}, True),
     ('json loads("false")', {}, False),
     ('json loads("null")', {}, None),
+    # json loads with single quoted string
+    ('json loads(\'{"name": "test"}\')', {}, {"name": "test"}),
+    ("json loads('{\"items\": [1, 2, 3]}')", {}, {"items": [1, 2, 3]}),
 ]
 
 DEFINED_FUNCS = [
@@ -252,9 +265,17 @@ DEFINED_FUNCS = [
         {},
         {"a": 1, "b": 2, "c": 3, "args": (), "kwargs": {"d": 4}},
     ),
-    ("func with inputs validation(1,2,3,4)", {}, {"a": 1, "b": 2, "args": (3, 4), "kwargs": {}}),
+    (
+        "func with inputs validation(1,2,3,4)",
+        {},
+        {"a": 1, "b": 2, "args": (3, 4), "kwargs": {}},
+    ),
     ("func with inputs validation(1,2,3,4,5)", {}, None),
-    ("func with inputs validation(a:1, b:2, c:3)", {}, {"a": 1, "b": 2, "args": (), "kwargs": {"c": 3}}),
+    (
+        "func with inputs validation(a:1, b:2, c:3)",
+        {},
+        {"a": 1, "b": 2, "args": (), "kwargs": {"c": 3}},
+    ),
     ("func with inputs validation(1,2)", {}, None),
     ("func with single param(1)", {}, 1),
     ("func with single param(b:1)", {}, 1),
@@ -295,5 +316,7 @@ def test_feel_parsers(expression, context, expected):
     test_data,
 )
 def test_feel_parsers_benchmark(benchmark, expression, context, expected):
-    result = benchmark(parse_expression, expression, context=context, raise_exception=False)
+    result = benchmark(
+        parse_expression, expression, context=context, raise_exception=False
+    )
     assert result == expected

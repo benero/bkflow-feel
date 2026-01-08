@@ -78,7 +78,7 @@
             | func_invocation
 
 number: SIGNED_INT | SIGNED_FLOAT
-string: STRING
+string: STRING | SINGLE_QUOTED_STRING
 variable: NAME
 true: "true"
 false: "false"
@@ -139,6 +139,7 @@ date_and_time_func: "date" "and" "time" "(" "\"" date_and_time "\"" ")"
 
 SIGNED_INT: /[-+]?[0-9]+/
 SIGNED_FLOAT: /[-+]?[0-9]*\.[0-9]+/
+SINGLE_QUOTED_STRING: /'[^']*'/
 %import common.CNAME -> NAME
 %import common.ESCAPED_STRING -> STRING
 %import common.WS_INLINE
